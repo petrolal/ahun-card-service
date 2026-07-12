@@ -27,6 +27,7 @@ dependencies {
 	implementation(libs.spring.boot.starter.webmvc)
 	implementation(libs.flyway.database.postgresql)
 	implementation(libs.kotlin.reflect)
+	implementation(libs.spring.doc.openapi)
 	implementation(libs.jackson.module.kotlin)
 	developmentOnly(libs.spring.boot.devtools)
 	developmentOnly(libs.spring.boot.docker.compose)
