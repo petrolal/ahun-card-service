@@ -1,0 +1,40 @@
+[versions]
+kotlin = "2.3.21"
+springBoot = "4.1.0"
+springDependencyManagement = "1.1.7"
+
+[libraries]
+# Spring Boot Starters
+spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
+spring-boot-starter-flyway = { group = "org.springframework.boot", name = "spring-boot-starter-flyway" }
+spring-boot-starter-thymeleaf = { group = "org.springframework.boot", name = "spring-boot-starter-thymeleaf" }
+spring-boot-starter-webmvc = { group = "org.springframework.boot", name = "spring-boot-starter-webmvc" }
+
+# Spring Boot Dev / Compose
+spring-boot-devtools = { group = "org.springframework.boot", name = "spring-boot-devtools" }
+spring-boot-docker-compose = { group = "org.springframework.boot", name = "spring-boot-docker-compose" }
+
+# Database / Flyway
+flyway-database-postgresql = { group = "org.flywaydb", name = "flyway-database-postgresql" }
+postgresql = { group = "org.postgresql", name = "postgresql" }
+
+# Kotlin
+kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
+kotlin-test-junit5 = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5" }
+
+# Jackson
+jackson-module-kotlin = { group = "tools.jackson.module", name = "jackson-module-kotlin" }
+
+# Test dependencies
+spring-boot-starter-data-jpa-test = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa-test" }
+spring-boot-starter-flyway-test = { group = "org.springframework.boot", name = "spring-boot-starter-flyway-test" }
+spring-boot-starter-thymeleaf-test = { group = "org.springframework.boot", name = "spring-boot-starter-thymeleaf-test" }
+spring-boot-starter-webmvc-test = { group = "org.springframework.boot", name = "spring-boot-starter-webmvc-test" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+kotlin-jpa = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "kotlin" }
+spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "springDependencyManagement" }
