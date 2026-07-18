@@ -1,6 +1,6 @@
 package com.petrolal.ahun.ahuncardservice.infrastructure.persistence.entity
 
-import com.petrolal.ahun.ahuncardservice.domain.models.SemesterEnum
+import com.petrolal.ahun.ahuncardservice.domain.SemesterEnum
 import jakarta.persistence.*
 import java.time.LocalDate
 import java.time.LocalDateTime

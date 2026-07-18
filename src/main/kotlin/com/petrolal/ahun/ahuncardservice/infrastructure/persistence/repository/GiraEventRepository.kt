@@ -1,7 +1,7 @@
 package com.petrolal.ahun.ahuncardservice.infrastructure.persistence.repository
 
-import com.petrolal.ahun.ahuncardservice.domain.models.GiraEvent
-import com.petrolal.ahun.ahuncardservice.domain.ports.GiraEventRepositoryPort
+import com.petrolal.ahun.ahuncardservice.domain.GiraEvent
+import com.petrolal.ahun.ahuncardservice.infrastructure.ports.GiraEventRepositoryPort
 import com.petrolal.ahun.ahuncardservice.infrastructure.persistence.entity.GiraEventEntity
 import org.springframework.stereotype.Repository
 

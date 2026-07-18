@@ -1,4 +1,4 @@
-package com.petrolal.ahun.ahuncardservice.domain.models
+package com.petrolal.ahun.ahuncardservice.domain
 
 import java.util.UUID
 

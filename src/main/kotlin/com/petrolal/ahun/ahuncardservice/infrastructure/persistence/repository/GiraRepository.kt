@@ -1,9 +1,9 @@
 package com.petrolal.ahun.ahuncardservice.infrastructure.persistence.repository
 
-import com.petrolal.ahun.ahuncardservice.domain.models.Gira
-import com.petrolal.ahun.ahuncardservice.domain.models.Theme
-import com.petrolal.ahun.ahuncardservice.domain.models.GiraEvent
-import com.petrolal.ahun.ahuncardservice.domain.ports.GiraRepositoryPort
+import com.petrolal.ahun.ahuncardservice.domain.Gira
+import com.petrolal.ahun.ahuncardservice.domain.Theme
+import com.petrolal.ahun.ahuncardservice.domain.GiraEvent
+import com.petrolal.ahun.ahuncardservice.infrastructure.ports.GiraRepositoryPort
 import org.springframework.stereotype.Repository
 
 @Repository

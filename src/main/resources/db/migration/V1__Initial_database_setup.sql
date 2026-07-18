@@ -1,5 +1,3 @@
-CREATE SEQUENCE IF NOT EXISTS revinfo_seq START WITH 1 INCREMENT BY 50;
-
 CREATE TABLE gira_events
 (
     id              UUID                        NOT NULL,

@@ -1,4 +1,4 @@
-package com.petrolal.ahun.ahuncardservice.domain.models
+package com.petrolal.ahun.ahuncardservice.domain
 
 import java.time.LocalDate
 import java.util.UUID
