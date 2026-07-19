@@ -1,13 +1,10 @@
 package com.petrolal.ahun.ahuncardservice.infrastructure.persistence.entity
 
 import com.petrolal.ahun.ahuncardservice.domain.GiraEvent
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Table
-import java.sql.Time
+import jakarta.persistence.*
 import java.time.LocalDateTime
-import java.util.UUID
+import java.time.LocalTime
+import java.util.*
 
 @Entity
 @Table(name = "gira_events")
@@ -19,7 +16,7 @@ class GiraEventEntity(
     var name: String,
 
     @Column(nullable = false)
-    var startedAt: Time,
+    var startedAt: LocalTime,
 
     @Column(nullable = false)
     var visibleInCard: Boolean,
@@ -32,6 +29,7 @@ class GiraEventEntity(
 
     @Column(nullable = true)
     var updatedAt: LocalDateTime?,
+
 ) {
     companion object {
         fun toDomain(giraEventEntity: GiraEventEntity): GiraEvent {
@@ -40,7 +38,7 @@ class GiraEventEntity(
                 name = giraEventEntity.name,
                 startedAt = giraEventEntity.startedAt,
                 visibleInCard = giraEventEntity.visibleInCard,
-                description = giraEventEntity.description,
+                description = giraEventEntity.description
             )
         }
     }

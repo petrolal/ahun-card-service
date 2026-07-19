@@ -3,7 +3,7 @@ package com.petrolal.ahun.ahuncardservice.infrastructure.ports
 import com.petrolal.ahun.ahuncardservice.domain.GiraEvent
 import com.petrolal.ahun.ahuncardservice.domain.dto.GiraEventRequestDto
 
-interface GiraEventRepositoryPort {
+interface GiraEventUsecasePort {
 
     fun findAll(): List<GiraEvent>
 
