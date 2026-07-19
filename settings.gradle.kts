@@ -1,1 +1,1 @@
-rootProject.name = "ahun-card-service"
+rootProject.name = "ahun-duty-service"

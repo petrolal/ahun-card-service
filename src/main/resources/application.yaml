@@ -1,6 +1,6 @@
 spring:
   application:
-    name: ahun-card-service
+    name: ahun-duty-service
 
   datasource:
     url: ${SPRING_DATASOURCE_URL}

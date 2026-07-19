@@ -8,7 +8,7 @@ plugins {
 
 group = "com.petrolal.ahun"
 version = "0.0.1-SNAPSHOT"
-description = "ahun-card-service"
+description = "ahun-duty-service"
 
 java {
 	toolchain {
