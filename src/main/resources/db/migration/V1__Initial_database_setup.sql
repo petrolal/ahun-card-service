@@ -1,4 +1,4 @@
-CREATE TABLE gira_events
+CREATE TABLE duty_events
 (
     id              UUID                        NOT NULL,
     name            VARCHAR(255)                NOT NULL,
@@ -7,10 +7,10 @@ CREATE TABLE gira_events
     description     VARCHAR(255),
     created_at      TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     updated_at      TIMESTAMP WITHOUT TIME ZONE,
-    CONSTRAINT pk_gira_events PRIMARY KEY (id)
+    CONSTRAINT pk_duty_events PRIMARY KEY (id)
 );
 
-CREATE TABLE giras
+CREATE TABLE duties
 (
     id          UUID                        NOT NULL,
     date        date                        NOT NULL,
@@ -20,13 +20,13 @@ CREATE TABLE giras
     year        INTEGER                     NOT NULL,
     created_at  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     updated_at  TIMESTAMP WITHOUT TIME ZONE,
-    CONSTRAINT pk_giras PRIMARY KEY (id)
+    CONSTRAINT pk_duties PRIMARY KEY (id)
 );
 
-CREATE TABLE giras_events
+CREATE TABLE duties_events
 (
     event_id UUID NOT NULL,
-    gira_id  UUID NOT NULL
+    duty_id  UUID NOT NULL
 );
 
 CREATE TABLE theme
@@ -39,11 +39,11 @@ CREATE TABLE theme
     CONSTRAINT pk_theme PRIMARY KEY (id)
 );
 
-ALTER TABLE giras
-    ADD CONSTRAINT FK_GIRAS_ON_THEME FOREIGN KEY (theme_id) REFERENCES theme (id);
+ALTER TABLE duties
+    ADD CONSTRAINT FK_DUTIES_ON_THEME FOREIGN KEY (theme_id) REFERENCES theme (id);
 
-ALTER TABLE giras_events
-    ADD CONSTRAINT fk_gireve_on_gira_entity FOREIGN KEY (gira_id) REFERENCES giras (id);
+ALTER TABLE duties_events
+    ADD CONSTRAINT fk_duteve_on_duty_entity FOREIGN KEY (duty_id) REFERENCES duties (id);
 
-ALTER TABLE giras_events
-    ADD CONSTRAINT fk_gireve_on_gira_event_entity FOREIGN KEY (event_id) REFERENCES gira_events (id);
+ALTER TABLE duties_events
+    ADD CONSTRAINT fk_duteve_on_duty_event_entity FOREIGN KEY (event_id) REFERENCES duty_events (id);
