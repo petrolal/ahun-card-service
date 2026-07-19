@@ -12,8 +12,8 @@ class OpenApiConfig {
     fun customOpenApi(): OpenAPI {
         return OpenAPI()
             .info(Info()
-                .title("Ahun Card Service")
+                .title("Ahun Duty Service")
                 .version("1.0")
-                .description("Service to generate and maintain duty card"))
+                .description("Service to generate and maintain duty"))
     }
 }

@@ -6,6 +6,7 @@ import java.util.UUID
 data class Duty(
     var id: UUID,
     var theme: Theme,
+    var dutyType: DutyTypeEnum,
     var date: LocalDate,
     var period: SemesterEnum,
     var description: String? = null,

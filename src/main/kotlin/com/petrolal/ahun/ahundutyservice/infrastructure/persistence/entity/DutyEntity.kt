@@ -1,5 +1,6 @@
 package com.petrolal.ahun.ahundutyservice.infrastructure.persistence.entity
 
+import com.petrolal.ahun.ahundutyservice.domain.DutyTypeEnum
 import com.petrolal.ahun.ahundutyservice.domain.SemesterEnum
 import jakarta.persistence.*
 import java.time.LocalDate
@@ -18,6 +19,10 @@ class DutyEntity(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theme_id")
     var theme: ThemeEntity,
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    var dutyType: DutyTypeEnum,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
