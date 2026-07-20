@@ -11,6 +11,10 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.util.*
 
+/**
+ * Application service orchestrating business use cases for [Duty]s.
+ * Direct inbound entry point for Web REST controllers.
+ */
 @Service
 @Transactional(readOnly = true)
 class DutyUsecase (
@@ -18,12 +22,30 @@ class DutyUsecase (
     private val repositoryTheme: ThemeRepositoryPort,
     private val repositoryDutyEvent: DutyEventRepositoryPort
 ) {
+    /**
+     * Finds all duties associated with a specific theme name.
+     *
+     * @param themeName Theme name to query.
+     * @return List of matching [Duty] domain models.
+     */
     fun findByThemeName(themeName: String): List<Duty> =
         repository.findByThemeName(themeName)
 
+    /**
+     * Lists all duties in the system.
+     *
+     * @return List of all [Duty] domain models.
+     */
     fun findAll(): List<Duty> =
         repository.findAll()
 
+    /**
+     * Creates a new Duty assignment referencing an existing theme and multiple duty events.
+     *
+     * @param requestDto Details of the duty assignment, including theme and event IDs.
+     * @return The created [Duty] domain model.
+     * @throws ResourceNotFoundException If the referenced Theme or any referenced Event is not found.
+     */
     @Transactional
     fun create(requestDto: DutyRequestDto): Duty {
         val theme = repositoryTheme.findById(requestDto.themeId)
