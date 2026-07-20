@@ -3,10 +3,11 @@ package com.petrolal.ahun.ahundutyservice.infrastructure.persistence.repository
 import com.petrolal.ahun.ahundutyservice.domain.Theme
 import com.petrolal.ahun.ahundutyservice.domain.dto.ThemeRequestDto
 import com.petrolal.ahun.ahundutyservice.domain.exception.ResourceNotFoundException
-import com.petrolal.ahun.ahundutyservice.infrastructure.ports.ThemeRepositoryPort
 import com.petrolal.ahun.ahundutyservice.infrastructure.persistence.entity.ThemeEntity
+import com.petrolal.ahun.ahundutyservice.infrastructure.ports.ThemeRepositoryPort
 import org.springframework.stereotype.Repository
-import java.util.UUID
+import java.time.LocalDateTime
+import java.util.*
 
 @Repository
 class ThemeRepository(
@@ -14,20 +15,20 @@ class ThemeRepository(
 ) : ThemeRepositoryPort {
     override fun findAll(): List<Theme> {
         return repository.findAll()
-            .map { Theme(it.id, it.name, it.description) }
+            .map { Theme(it.id, it.name, it.description, it.createdAt, it.updatedAt) }
     }
 
     override fun filterByName(name: String): List<Theme> {
         return repository.filterByName(name)
-            .map { Theme(it.id, it.name, it.description) }
+            .map { Theme(it.id, it.name, it.description, it.createdAt, it.updatedAt) }
     }
 
-    override fun create(theme: Theme): Theme {
-        val entity = repository.save(ThemeEntity.toEntity(theme))
-        return ThemeEntity.toDomain(entity)
+    override fun create(theme: ThemeEntity): Theme {
+        return ThemeEntity.toDomain(repository
+            .save(theme))
     }
 
-    override fun update(id: UUID, theme: ThemeRequestDto): Theme {
+    override fun update(id: UUID, theme: ThemeEntity): Theme {
         val entity = repository.findById(id)
 
         if (entity.isEmpty) {

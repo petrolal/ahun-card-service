@@ -1,12 +1,12 @@
 package com.petrolal.ahun.ahundutyservice.infrastructure.ports
 
 import com.petrolal.ahun.ahundutyservice.domain.DutyEvent
-import com.petrolal.ahun.ahundutyservice.domain.dto.DutyEventRequestDto
+import com.petrolal.ahun.ahundutyservice.infrastructure.persistence.entity.DutyEventEntity
 
 interface DutyEventRepositoryPort {
 
-    fun findAll(): List<DutyEvent>
+    fun findAll(): List<DutyEventEntity>
 
-    fun save(events: List<DutyEventRequestDto>): List<DutyEvent>
+    fun create(events: List<DutyEventEntity>): List<DutyEventEntity>
 
 }

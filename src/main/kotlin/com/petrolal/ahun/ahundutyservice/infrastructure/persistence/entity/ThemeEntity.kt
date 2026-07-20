@@ -25,22 +25,22 @@ class ThemeEntity(
 
     ) {
     companion object {
-        fun toEntity(theme: Theme): ThemeEntity {
-            return ThemeEntity(
+        fun toEntity(theme: Theme): ThemeEntity =
+            ThemeEntity(
                 id = theme.id,
                 name = theme.name,
                 description = theme.description,
                 createdAt = LocalDateTime.now(),
                 updatedAt = null,
             )
-        }
 
-        fun toDomain(themeEntity: ThemeEntity): Theme {
-            return Theme(
+        fun toDomain(themeEntity: ThemeEntity): Theme =
+            Theme(
                 id = themeEntity.id,
                 name = themeEntity.name,
                 description = themeEntity.description,
+                createdAt = themeEntity.createdAt,
+                updatedAt = themeEntity.updatedAt,
             )
-        }
     }
 }

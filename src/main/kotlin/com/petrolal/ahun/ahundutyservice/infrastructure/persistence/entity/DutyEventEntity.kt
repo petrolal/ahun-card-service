@@ -1,7 +1,10 @@
 package com.petrolal.ahun.ahundutyservice.infrastructure.persistence.entity
 
 import com.petrolal.ahun.ahundutyservice.domain.DutyEvent
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.*
@@ -32,14 +35,26 @@ class DutyEventEntity(
 
 ) {
     companion object {
-        fun toDomain(dutyEventEntity: DutyEventEntity): DutyEvent {
-            return DutyEvent(
+        fun toDomain(dutyEventEntity: DutyEventEntity): DutyEvent =
+            DutyEvent(
                 id = dutyEventEntity.id,
                 name = dutyEventEntity.name,
                 startedAt = dutyEventEntity.startedAt,
                 visibleInCard = dutyEventEntity.visibleInCard,
-                description = dutyEventEntity.description
+                description = dutyEventEntity.description,
+                createdAt = dutyEventEntity.createdAt,
+                updatedAt = dutyEventEntity.updatedAt,
             )
-        }
+
+        fun toEntity(dutyEvent: DutyEvent): DutyEventEntity =
+            DutyEventEntity(
+                id = dutyEvent.id,
+                name = dutyEvent.name,
+                startedAt = dutyEvent.startedAt,
+                visibleInCard = dutyEvent.visibleInCard,
+                description = dutyEvent.description,
+                createdAt = dutyEvent.createdAt,
+                updatedAt = dutyEvent.updatedAt
+            )
     }
 }

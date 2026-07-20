@@ -2,6 +2,7 @@ package com.petrolal.ahun.ahundutyservice.infrastructure.ports
 
 import com.petrolal.ahun.ahundutyservice.domain.Theme
 import com.petrolal.ahun.ahundutyservice.domain.dto.ThemeRequestDto
+import com.petrolal.ahun.ahundutyservice.infrastructure.persistence.entity.ThemeEntity
 import java.util.UUID
 
 interface ThemeRepositoryPort {
@@ -10,8 +11,8 @@ interface ThemeRepositoryPort {
 
     fun filterByName(name: String): List<Theme>
 
-    fun create(theme: Theme): Theme
+    fun create(theme: ThemeEntity): Theme
 
-    fun update(id: UUID, theme: ThemeRequestDto): Theme
+    fun update(id: UUID, theme: ThemeEntity): Theme
 
 }
