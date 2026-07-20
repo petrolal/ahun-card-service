@@ -4,6 +4,7 @@ import com.petrolal.ahun.ahundutyservice.application.ports.DutyEventRepositoryPo
 import com.petrolal.ahun.ahundutyservice.application.ports.DutyRepositoryPort
 import com.petrolal.ahun.ahundutyservice.application.ports.ThemeRepositoryPort
 import com.petrolal.ahun.ahundutyservice.domain.Duty
+import com.petrolal.ahun.ahundutyservice.domain.SemesterEnum
 import com.petrolal.ahun.ahundutyservice.domain.dto.DutyRequestDto
 import com.petrolal.ahun.ahundutyservice.domain.exception.ResourceNotFoundException
 import org.springframework.stereotype.Service
@@ -56,12 +57,20 @@ class DutyUsecase (
             throw ResourceNotFoundException("One or more events not found")
         }
 
+        val monthInt: Int = requestDto.date.monthValue
+
+        val period = when {
+            monthInt <= 6 -> SemesterEnum.FIRST_SEMESTER
+            monthInt >= 8 -> SemesterEnum.SECOND_SEMESTER
+            else -> SemesterEnum.VACATION
+        }
+
         val duty = Duty(
             id = UUID.randomUUID(),
             theme = theme,
             dutyType = requestDto.dutyType,
             date = requestDto.date,
-            period = requestDto.period,
+            period = period,
             description = requestDto.description,
             year = requestDto.year,
             events = events.toMutableSet(),

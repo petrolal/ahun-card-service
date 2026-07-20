@@ -8,7 +8,7 @@ import java.util.*
 
 interface DutyRepositoryJpa : JpaRepository<DutyEntity, UUID> {
 
-    @Query("SELECT d FROM DutyEntity d LEFT JOIN FETCH d.theme LEFT JOIN FETCH d.events WHERE d.theme.name = :themeName")
+    @Query("SELECT d FROM DutyEntity d LEFT JOIN FETCH d.theme LEFT JOIN FETCH d.events WHERE d.theme.name like %:themeName%")
     fun findByThemeName(@Param("themeName") themeName: String): List<DutyEntity>
 
     @Query("SELECT d FROM DutyEntity d LEFT JOIN FETCH d.theme LEFT JOIN FETCH d.events")
