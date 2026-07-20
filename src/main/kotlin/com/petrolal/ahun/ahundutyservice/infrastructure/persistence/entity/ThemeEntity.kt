@@ -30,8 +30,8 @@ class ThemeEntity(
                 id = theme.id,
                 name = theme.name,
                 description = theme.description,
-                createdAt = LocalDateTime.now(),
-                updatedAt = null,
+                createdAt = theme.createdAt,
+                updatedAt = theme.updatedAt,
             )
 
         fun toDomain(themeEntity: ThemeEntity): Theme =

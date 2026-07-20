@@ -12,7 +12,7 @@ data class Duty(
     var period: SemesterEnum,
     var description: String? = null,
     var year: Int,
-    var events: MutableList<DutyEvent>,
+    var events: MutableSet<DutyEvent>,
     var createdAt: LocalDateTime,
     var updatedAt: LocalDateTime? = null,
 )

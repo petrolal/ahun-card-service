@@ -1,18 +1,18 @@
 package com.petrolal.ahun.ahundutyservice.infrastructure.adapters.inbound.rest
 
+import com.petrolal.ahun.ahundutyservice.application.usecases.DutyUsecase
 import com.petrolal.ahun.ahundutyservice.domain.Duty
-import com.petrolal.ahun.ahundutyservice.infrastructure.ports.DutyUsecasePort
-import org.springframework.data.repository.query.Param
+import com.petrolal.ahun.ahundutyservice.domain.dto.DutyRequestDto
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/duty")
 class DutyResource(
-    private val dutyUsecase: DutyUsecasePort,
+    private val dutyUsecase: DutyUsecase,
 ) {
 
     @GetMapping
-    fun findAll(@Param("theme") theme: String?): List<Duty> {
+    fun findAll(@RequestParam(name = "theme", required = false) theme: String?): List<Duty> {
         if (!theme.isNullOrBlank()) {
             return dutyUsecase.findByThemeName(theme)
         }
@@ -21,6 +21,6 @@ class DutyResource(
     }
 
     @PostMapping
-    fun create(@RequestBody duty: Duty): Duty = dutyUsecase.create(duty)
+    fun create(@RequestBody requestDto: DutyRequestDto): Duty = dutyUsecase.create(requestDto)
 
 }

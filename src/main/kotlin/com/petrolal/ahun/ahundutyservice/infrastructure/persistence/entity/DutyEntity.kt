@@ -41,7 +41,7 @@ class DutyEntity(
         joinColumns = [JoinColumn(name = "duty_id", referencedColumnName = "id")],
         inverseJoinColumns = [JoinColumn(name = "event_id", referencedColumnName = "id")]
     )
-    var events: MutableList<DutyEventEntity>,
+    var events: MutableSet<DutyEventEntity>,
 
     @Column(nullable = false)
     var createdAt: LocalDateTime,
@@ -60,7 +60,7 @@ class DutyEntity(
                 period = dutyEntity.period,
                 description = dutyEntity.description,
                 year = dutyEntity.year,
-                events = dutyEntity.events.map { DutyEventEntity.toDomain(it) }.toMutableList(),
+                events = dutyEntity.events.map { DutyEventEntity.toDomain(it) }.toMutableSet(),
                 createdAt = dutyEntity.createdAt,
                 updatedAt = dutyEntity.updatedAt,
             )
@@ -80,7 +80,7 @@ class DutyEntity(
                 period = duty.period,
                 description = duty.description,
                 year = duty.year,
-                events = duty.events.map { DutyEventEntity.toEntity(it) }.toMutableList(),
+                events = duty.events.map { DutyEventEntity.toEntity(it) }.toMutableSet(),
                 createdAt = duty.createdAt,
                 updatedAt = duty.updatedAt,
             )

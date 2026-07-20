@@ -1,39 +1,52 @@
 package com.petrolal.ahun.ahundutyservice.application.usecases
 
+import com.petrolal.ahun.ahundutyservice.application.ports.DutyEventRepositoryPort
+import com.petrolal.ahun.ahundutyservice.application.ports.DutyRepositoryPort
+import com.petrolal.ahun.ahundutyservice.application.ports.ThemeRepositoryPort
 import com.petrolal.ahun.ahundutyservice.domain.Duty
-import com.petrolal.ahun.ahundutyservice.infrastructure.persistence.entity.DutyEntity
-import com.petrolal.ahun.ahundutyservice.infrastructure.persistence.entity.DutyEventEntity
-import com.petrolal.ahun.ahundutyservice.infrastructure.persistence.entity.ThemeEntity
-import com.petrolal.ahun.ahundutyservice.infrastructure.ports.DutyEventRepositoryPort
-import com.petrolal.ahun.ahundutyservice.infrastructure.ports.DutyRepositoryPort
-import com.petrolal.ahun.ahundutyservice.infrastructure.ports.DutyUsecasePort
-import com.petrolal.ahun.ahundutyservice.infrastructure.ports.ThemeRepositoryPort
+import com.petrolal.ahun.ahundutyservice.domain.dto.DutyRequestDto
+import com.petrolal.ahun.ahundutyservice.domain.exception.ResourceNotFoundException
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
+import java.util.*
 
 @Service
+@Transactional(readOnly = true)
 class DutyUsecase (
     private val repository: DutyRepositoryPort,
     private val repositoryTheme: ThemeRepositoryPort,
     private val repositoryDutyEvent: DutyEventRepositoryPort
-) : DutyUsecasePort {
-    override fun findByThemeName(themeName: String): List<Duty> =
+) {
+    fun findByThemeName(themeName: String): List<Duty> =
         repository.findByThemeName(themeName)
-            .map(DutyEntity::toDomain)
 
-    override fun findAll(): List<Duty> =
+    fun findAll(): List<Duty> =
         repository.findAll()
-            .map(DutyEntity::toDomain)
 
-    override fun create(duty: Duty): Duty {
+    @Transactional
+    fun create(requestDto: DutyRequestDto): Duty {
+        val theme = repositoryTheme.findById(requestDto.themeId)
+            ?: throw ResourceNotFoundException("Theme with id ${requestDto.themeId} not found")
 
-        val theme = repositoryTheme.create(ThemeEntity.toEntity(duty.theme))
-        val events = repositoryDutyEvent.create(duty.events.map { DutyEventEntity.toEntity(it) })
+        val events = repositoryDutyEvent.findAllById(requestDto.eventIds)
+        if (events.size != requestDto.eventIds.size) {
+            throw ResourceNotFoundException("One or more events not found")
+        }
 
-        duty.theme = theme
-        duty.events = events.map(DutyEventEntity::toDomain)
-            .toMutableList()
+        val duty = Duty(
+            id = UUID.randomUUID(),
+            theme = theme,
+            dutyType = requestDto.dutyType,
+            date = requestDto.date,
+            period = requestDto.period,
+            description = requestDto.description,
+            year = requestDto.year,
+            events = events.toMutableSet(),
+            createdAt = LocalDateTime.now(),
+            updatedAt = null
+        )
 
-        val created = repository.create(duty)
-        return DutyEntity.toDomain(created)
+        return repository.create(duty)
     }
 }

@@ -4,7 +4,6 @@ import com.petrolal.ahun.ahundutyservice.application.usecases.ThemeUsecase
 import com.petrolal.ahun.ahundutyservice.domain.Theme
 import com.petrolal.ahun.ahundutyservice.domain.dto.ThemeRequestDto
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.data.repository.query.Param
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -16,21 +15,19 @@ class ThemeResource(
 ) {
 
     @GetMapping
-    fun list(@Param("name") name: String?): List<Theme> {
-
+    fun list(@RequestParam(name = "name", required = false) name: String?): List<Theme> {
         if (!name.isNullOrEmpty()) {
             return themeUsecase.filterByName(name)
         }
-
         return themeUsecase.findAll()
     }
 
     @PostMapping
-    fun create(themeRequestDto: ThemeRequestDto): Theme =
+    fun create(@RequestBody themeRequestDto: ThemeRequestDto): Theme =
         themeUsecase.create(themeRequestDto)
 
     @PutMapping
-    fun update(@Param("id") id: UUID, themeRequestDto: ThemeRequestDto): Theme =
+    fun update(@RequestParam("id") id: UUID, @RequestBody themeRequestDto: ThemeRequestDto): Theme =
         themeUsecase.update(id, themeRequestDto)
 
 }
