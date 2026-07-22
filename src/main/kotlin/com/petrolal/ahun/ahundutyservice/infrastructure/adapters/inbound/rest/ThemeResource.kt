@@ -3,13 +3,14 @@ package com.petrolal.ahun.ahundutyservice.infrastructure.adapters.inbound.rest
 import com.petrolal.ahun.ahundutyservice.application.usecases.ThemeUsecase
 import com.petrolal.ahun.ahundutyservice.domain.Theme
 import com.petrolal.ahun.ahundutyservice.domain.dto.ThemeRequestDto
+import com.petrolal.ahun.ahundutyservice.domain.exception.BadRequestException
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
 /**
  * Inbound REST controller for managing Themes.
- * Exposes endpoints for listing, creating, and updating themes.
+ * Exposes endpoints for listing, finding, creating, and updating themes.
  */
 @Tag(name = "Theme", description = "Theme for the selected Duty and card")
 @RestController
@@ -20,9 +21,6 @@ class ThemeResource(
 
     /**
      * Endpoint to list all themes, optionally filtered by a name query parameter.
-     *
-     * @param name Optional keyword filter for the theme's name.
-     * @return List of [Theme]s.
      */
     @GetMapping
     fun list(@RequestParam(name = "name", required = false) name: String?): List<Theme> {
@@ -34,9 +32,6 @@ class ThemeResource(
 
     /**
      * Endpoint to get a specific theme by ID.
-     *
-     * @param id The theme UUID.
-     * @return The [Theme] object.
      */
     @GetMapping("/{id}")
     fun findById(@PathVariable("id") id: UUID): Theme =
@@ -44,33 +39,22 @@ class ThemeResource(
 
     /**
      * Endpoint to create a new theme.
-     *
-     * @param themeRequestDto Details of the theme to create.
-     * @return The created [Theme] object.
      */
     @PostMapping
     fun create(@RequestBody themeRequestDto: ThemeRequestDto): Theme =
         themeUsecase.create(themeRequestDto)
 
     /**
-     * Endpoint to update an existing theme using path variable.
-     *
-     * @param id The theme UUID.
-     * @param themeRequestDto The updated theme values.
-     * @return The updated [Theme] object.
+     * Endpoint to update an existing theme.
+     * Accepts ID as either path variable (`/theme/{id}`) or query parameter (`/theme?id=...`).
      */
-    @PutMapping("/{id}")
-    fun updateForPath(@PathVariable("id") id: UUID, @RequestBody themeRequestDto: ThemeRequestDto): Theme =
-        themeUsecase.update(id, themeRequestDto)
-
-    /**
-     * Endpoint to update an existing theme using query parameter.
-     *
-     * @param id The theme UUID.
-     * @param themeRequestDto The updated theme values.
-     * @return The updated [Theme] object.
-     */
-    @PutMapping
-    fun update(@RequestParam("id") id: UUID, @RequestBody themeRequestDto: ThemeRequestDto): Theme =
-        themeUsecase.update(id, themeRequestDto)
+    @PutMapping(value = ["", "/{id}"])
+    fun update(
+        @PathVariable(name = "id", required = false) pathId: UUID?,
+        @RequestParam(name = "id", required = false) queryId: UUID?,
+        @RequestBody themeRequestDto: ThemeRequestDto
+    ): Theme {
+        val id = pathId ?: queryId ?: throw BadRequestException("Theme ID must be provided in URL path or query parameter")
+        return themeUsecase.update(id, themeRequestDto)
+    }
 }

@@ -4,6 +4,7 @@ import com.petrolal.ahun.ahundutyservice.application.usecases.DutyUsecase
 import com.petrolal.ahun.ahundutyservice.domain.Duty
 import com.petrolal.ahun.ahundutyservice.domain.DutyTypeEnum
 import com.petrolal.ahun.ahundutyservice.domain.dto.DutyRequestDto
+import com.petrolal.ahun.ahundutyservice.domain.exception.BadRequestException
 import com.petrolal.ahun.ahundutyservice.infrastructure.adapters.inbound.rest.assembler.DutyModelAssembler
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.hateoas.CollectionModel
@@ -15,7 +16,7 @@ import java.util.UUID
 
 /**
  * Inbound REST controller for managing Duty assignments.
- * Exposes endpoints for listing, finding, and creating duty assignments with HATEOAS hypermedia controls.
+ * Exposes endpoints for listing, finding, creating, and updating duty assignments with HATEOAS hypermedia controls.
  */
 @Tag(name = "Duty", description = "The endpoint to manage duties")
 @RestController
@@ -28,10 +29,6 @@ class DutyResource(
     /**
      * Endpoint to list all duties, optionally filtered by a theme name and/or a duty type query parameter.
      * Returns a HAL compliant [CollectionModel] containing hypermedia links for each duty.
-     *
-     * @param theme Optional keyword filter for the theme's name.
-     * @param dutyType Optional filter for the duty type.
-     * @return HATEOAS [CollectionModel] of [Duty] entities.
      */
     @GetMapping
     fun findAll(
@@ -51,9 +48,6 @@ class DutyResource(
     /**
      * Endpoint to get a specific duty by ID.
      * Returns a HAL compliant [EntityModel] with hypermedia links for self, card render, and card preview.
-     *
-     * @param id The duty UUID.
-     * @return HATEOAS [EntityModel] of the [Duty] object.
      */
     @GetMapping("/{id}")
     fun findById(@PathVariable("id") id: UUID): EntityModel<Duty> {
@@ -64,9 +58,6 @@ class DutyResource(
     /**
      * Endpoint to create a new duty assignment.
      * Returns HTTP 201 Created with a Location header and HATEOAS HAL representation.
-     *
-     * @param requestDto Details of the duty assignment to create.
-     * @return ResponseEntity containing the created HATEOAS [EntityModel] and Location header.
      */
     @PostMapping
     fun create(@RequestBody requestDto: DutyRequestDto): ResponseEntity<EntityModel<Duty>> {
@@ -79,33 +70,17 @@ class DutyResource(
     }
 
     /**
-     * Endpoint to update an existing duty assignment using a path variable ID.
-     *
-     * @param id The duty UUID.
-     * @param requestDto The updated duty details.
-     * @return HATEOAS [EntityModel] of the updated [Duty] object.
+     * Endpoint to update an existing duty assignment.
+     * Accepts ID as either path variable (`/duty/{id}`) or query parameter (`/duty?id=...`).
      */
-    @PutMapping("/{id}")
+    @PutMapping(value = ["", "/{id}"])
     fun update(
-        @PathVariable("id") id: UUID,
+        @PathVariable(name = "id", required = false) pathId: UUID?,
+        @RequestParam(name = "id", required = false) queryId: UUID?,
         @RequestBody requestDto: DutyRequestDto
     ): EntityModel<Duty> {
+        val id = pathId ?: queryId ?: throw BadRequestException("Duty ID must be provided in URL path or query parameter")
         val updatedDuty = dutyUsecase.update(id, requestDto)
         return dutyModelAssembler.toModel(updatedDuty)
-    }
-
-    /**
-     * Endpoint to update an existing duty assignment using a query parameter ID.
-     *
-     * @param id The duty UUID.
-     * @param requestDto The updated duty details.
-     * @return HATEOAS [EntityModel] of the updated [Duty] object.
-     */
-    @PutMapping
-    fun updateWithParam(
-        @RequestParam("id") id: UUID,
-        @RequestBody requestDto: DutyRequestDto
-    ): EntityModel<Duty> {
-        return update(id, requestDto)
     }
 }
