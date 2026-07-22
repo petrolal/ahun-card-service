@@ -5,6 +5,7 @@ springDependencyManagement = "1.1.7"
 springDocOpenapi = "3.0.3"
 playwright = "1.44.0"
 flyingSaucerCore = "9.1.22"
+kotlinMockito = "5.4.0"
 
 [libraries]
 # Spring Boot Starters
@@ -13,6 +14,9 @@ spring-boot-starter-flyway = { group = "org.springframework.boot", name = "sprin
 spring-boot-starter-thymeleaf = { group = "org.springframework.boot", name = "spring-boot-starter-thymeleaf" }
 spring-boot-starter-webmvc = { group = "org.springframework.boot", name = "spring-boot-starter-webmvc" }
 spring-doc-openapi = { group = "org.springdoc", name = "springdoc-openapi-starter-webmvc-ui", version.ref = "springDocOpenapi" }
+sprint-boot-hateoas = {group = "org.springframework.boot", name = "spring-boot-starter-hateoas"}
+sprint-boot-starter-test = {group = "org.springframework.boot", name = "spring-boot-starter-test"}
+kotlin-mockito = {group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "kotlinMockito"}
 
 # Spring Boot Dev / Compose
 spring-boot-devtools = { group = "org.springframework.boot", name = "spring-boot-devtools" }
@@ -34,10 +38,6 @@ microsoft-playwright = {group = "com.microsoft.playwright", name = "playwright",
 xhtmlrenderer-flyingSaucerCore = { group = "org.xhtmlrenderer", name = "flying-saucer-core", version.ref = "flyingSaucerCore"}
 
 # Test dependencies
-spring-boot-starter-data-jpa-test = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa-test" }
-spring-boot-starter-flyway-test = { group = "org.springframework.boot", name = "spring-boot-starter-flyway-test" }
-spring-boot-starter-thymeleaf-test = { group = "org.springframework.boot", name = "spring-boot-starter-thymeleaf-test" }
-spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
 
 [plugins]

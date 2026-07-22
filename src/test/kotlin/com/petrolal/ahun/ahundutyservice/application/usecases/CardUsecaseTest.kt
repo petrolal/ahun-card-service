@@ -2,12 +2,13 @@ package com.petrolal.ahun.ahundutyservice.application.usecases
 
 import com.petrolal.ahun.ahundutyservice.application.ports.CardRenderPort
 import com.petrolal.ahun.ahundutyservice.application.ports.DutyRepositoryPort
+import com.petrolal.ahun.ahundutyservice.application.ports.TemplateRepositoryPort
 import com.petrolal.ahun.ahundutyservice.domain.*
 import com.petrolal.ahun.ahundutyservice.domain.exception.ResourceNotFoundException
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.*
+import org.mockito.kotlin.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -17,19 +18,15 @@ class CardUsecaseTest {
 
     private lateinit var dutyRepository: DutyRepositoryPort
     private lateinit var cardRenderPort: CardRenderPort
+    private lateinit var templateRepository: TemplateRepositoryPort
     private lateinit var cardUsecase: CardUsecase
-
-    @Suppress("UNCHECKED_CAST")
-    private fun <T> anyObj(): T {
-        any<T>()
-        return null as T
-    }
 
     @BeforeEach
     fun setUp() {
-        dutyRepository = mock(DutyRepositoryPort::class.java)
-        cardRenderPort = mock(CardRenderPort::class.java)
-        cardUsecase = CardUsecase(dutyRepository, cardRenderPort)
+        dutyRepository = mock()
+        cardRenderPort = mock()
+        templateRepository = mock()
+        cardUsecase = CardUsecase(dutyRepository, cardRenderPort, templateRepository)
     }
 
     @Test
@@ -47,9 +44,11 @@ class CardUsecaseTest {
             createdAt = LocalDateTime.now()
         )
 
-        `when`(dutyRepository.findCurrentMonthDutyByType(anyObj(), anyInt(), anyInt()))
+        whenever(dutyRepository.findCurrentMonthDutyByType(eq(DutyTypeEnum.OPENED_GIRA), any(), any()))
             .thenReturn(duty)
-        `when`(cardRenderPort.renderHtml(anyString(), anyObj()))
+        whenever(templateRepository.findByThemeId(theme.id))
+            .thenReturn(listOf(Template(UUID.randomUUID(), "Template 1", "gira_de_exu_e_cura.png", theme)))
+        whenever(cardRenderPort.renderHtml(any(), any()))
             .thenReturn("<html>GIRA DE EXU E CURA</html>")
 
         val html = cardUsecase.getPreview()
@@ -60,7 +59,7 @@ class CardUsecaseTest {
 
     @Test
     fun `should throw ResourceNotFoundException if no GIRA_ABERTA duty is found`() {
-        `when`(dutyRepository.findCurrentMonthDutyByType(anyObj(), anyInt(), anyInt()))
+        whenever(dutyRepository.findCurrentMonthDutyByType(eq(DutyTypeEnum.OPENED_GIRA), any(), any()))
             .thenReturn(null)
 
         assertThrows(ResourceNotFoundException::class.java) {
@@ -83,8 +82,9 @@ class CardUsecaseTest {
             createdAt = LocalDateTime.now()
         )
 
-        `when`(dutyRepository.findById(dutyId)).thenReturn(duty)
-        `when`(cardRenderPort.renderPng(anyString(), anyObj()))
+        whenever(dutyRepository.findById(dutyId)).thenReturn(duty)
+        whenever(templateRepository.findByThemeId(theme.id)).thenReturn(emptyList())
+        whenever(cardRenderPort.renderPng(any(), any()))
             .thenReturn(byteArrayOf(1, 2, 3))
 
         val bytes = cardUsecase.renderCardPng(dutyId = dutyId)
@@ -92,5 +92,33 @@ class CardUsecaseTest {
         assertNotNull(bytes)
         assertEquals(3, bytes.size)
         verify(dutyRepository).findById(dutyId)
+    }
+
+    @Test
+    fun `should pick a random template among theme templates when multiple templates exist for theme`() {
+        val dutyId = UUID.randomUUID()
+        val theme = Theme(UUID.randomUUID(), "Feijoada dos Vovôs", null, LocalDateTime.now())
+        val duty = Duty(
+            id = dutyId,
+            theme = theme,
+            dutyType = DutyTypeEnum.OPENED_GIRA,
+            date = LocalDate.of(2026, 5, 20),
+            period = SemesterEnum.FIRST_SEMESTER,
+            year = 2026,
+            events = mutableSetOf(),
+            createdAt = LocalDateTime.now()
+        )
+
+        val t1 = Template(UUID.randomUUID(), "Template 1", "feijoada_dos_vovos.png", theme)
+        val t2 = Template(UUID.randomUUID(), "Template 2", "feijoada_dos_vovos_2.png", theme)
+
+        whenever(dutyRepository.findById(dutyId)).thenReturn(duty)
+        whenever(templateRepository.findByThemeId(theme.id)).thenReturn(listOf(t1, t2))
+        whenever(cardRenderPort.renderPng(any(), any())).thenReturn(byteArrayOf(5, 6, 7))
+
+        val bytes = cardUsecase.renderCardPng(dutyId = dutyId)
+
+        assertNotNull(bytes)
+        verify(templateRepository).findByThemeId(theme.id)
     }
 }

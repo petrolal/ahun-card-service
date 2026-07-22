@@ -25,7 +25,7 @@ dependencies {
 	implementation(libs.spring.boot.starter.flyway)
 	implementation(libs.spring.boot.starter.thymeleaf)
 	implementation(libs.spring.boot.starter.webmvc)
-	implementation("org.springframework.boot:spring-boot-starter-hateoas")
+	implementation(libs.sprint.boot.hateoas)
 	implementation(libs.flyway.database.postgresql)
 	implementation(libs.xhtmlrenderer.flyingSaucerCore)
 	implementation(libs.kotlin.reflect)
@@ -35,7 +35,8 @@ dependencies {
 	developmentOnly(libs.spring.boot.devtools)
 	developmentOnly(libs.spring.boot.docker.compose)
 	runtimeOnly(libs.postgresql)
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation(libs.sprint.boot.starter.test)
+	testImplementation(libs.kotlin.mockito)
 	testImplementation(libs.kotlin.test.junit5)
 	testRuntimeOnly(libs.junit.platform.launcher)
 }

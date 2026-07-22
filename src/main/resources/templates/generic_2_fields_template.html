@@ -12,13 +12,14 @@
         body {
             width: 1000px;
             height: 1250px;
-            background: url('gira_de_exu_e_cura_2.jpg') no-repeat center center;
+            background-repeat: no-repeat;
+            background-position: center;
             background-size: cover;
             font-family: 'Arial', sans-serif;
             position: relative;
         }
 
-        /* Container posicionador sobre as caixas originais */
+        /* Position container over card text boxes */
         .fields-container {
             position: absolute;
             top: 50.5%;
@@ -55,7 +56,7 @@
         }
     </style>
 </head>
-<body th:style="'background-image: url(' + @{/images/gira_de_exu_e_cura_2.jpg} + '); background-repeat: no-repeat; background-position: center; background-size: cover;'">
+<body th:style="${bgImageDataUri != null and !bgImageDataUri.isEmpty()} ? 'background-image: url(' + ${bgImageDataUri} + ');' : 'background-image: url(' + @{'/images/' + ${bgImageName != null ? bgImageName : 'gira_de_exu_e_cura_2.png'}} + ');'">
 <div class="fields-container">
     <!-- Campo 1: Título Principal / Evento -->
     <div class="card-box">
