@@ -40,4 +40,30 @@ class DutyEventRepository(
         return repository.findAllById(ids)
             .map(DutyEventEntity::toDomain)
     }
+
+    /**
+     * Finds a duty event by its ID.
+     */
+    override fun findById(id: UUID): DutyEvent? {
+        return repository.findById(id)
+            .map(DutyEventEntity::toDomain)
+            .orElse(null)
+    }
+
+    /**
+     * Updates an existing duty event in the database.
+     */
+    override fun update(id: UUID, event: DutyEvent): DutyEvent {
+        val existingEntity = repository.findById(id)
+            .orElseThrow { com.petrolal.ahun.ahundutyservice.domain.exception.ResourceNotFoundException("DutyEvent with id $id not found") }
+
+        existingEntity.name = event.name
+        existingEntity.startedAt = event.startedAt
+        existingEntity.description = event.description
+        existingEntity.visibleInCard = event.visibleInCard
+        existingEntity.updatedAt = java.time.LocalDateTime.now()
+
+        val saved = repository.save(existingEntity)
+        return DutyEventEntity.toDomain(saved)
+    }
 }

@@ -28,6 +28,17 @@ class ThemeUsecase (
     }
 
     /**
+     * Finds a specific theme by its ID.
+     *
+     * @param id UUID of the theme.
+     * @return The [Theme] domain model.
+     * @throws com.petrolal.ahun.ahundutyservice.domain.exception.ResourceNotFoundException If the theme is not found.
+     */
+    fun findById(id: UUID): Theme =
+        repository.findById(id)
+            ?: throw com.petrolal.ahun.ahundutyservice.domain.exception.ResourceNotFoundException("Theme with id $id not found")
+
+    /**
      * Filters themes by their name.
      *
      * @param name Theme name keyword to search for.

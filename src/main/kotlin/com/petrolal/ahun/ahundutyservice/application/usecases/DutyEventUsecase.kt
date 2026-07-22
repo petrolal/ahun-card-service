@@ -53,4 +53,39 @@ class DutyEventUsecase(
 
         return repository.create(domainEvents)
     }
+
+    /**
+     * Finds a specific duty event by its ID.
+     *
+     * @param id UUID of the duty event.
+     * @return The [DutyEvent] domain model.
+     * @throws ResourceNotFoundException If the duty event is not found.
+     */
+    fun findById(id: UUID): DutyEvent =
+        repository.findById(id)
+            ?: throw com.petrolal.ahun.ahundutyservice.domain.exception.ResourceNotFoundException("DutyEvent with id $id not found")
+
+    /**
+     * Updates an existing duty event.
+     *
+     * @param id Unique identifier of the duty event to update.
+     * @param requestDto The updated duty event details.
+     * @return The updated [DutyEvent] domain model.
+     * @throws ResourceNotFoundException If the duty event is not found.
+     */
+    @Transactional
+    fun update(id: UUID, requestDto: DutyEventRequestDto): DutyEvent {
+        val existing = repository.findById(id)
+            ?: throw com.petrolal.ahun.ahundutyservice.domain.exception.ResourceNotFoundException("DutyEvent with id $id not found")
+
+        val updated = existing.copy(
+            name = requestDto.name,
+            startedAt = requestDto.startedAt,
+            description = requestDto.description,
+            visibleInCard = requestDto.visibleInCard,
+            updatedAt = LocalDateTime.now()
+        )
+
+        return repository.update(id, updated)
+    }
 }

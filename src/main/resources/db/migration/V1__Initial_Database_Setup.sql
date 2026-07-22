@@ -1,5 +1,3 @@
-CREATE SEQUENCE IF NOT EXISTS revinfo_seq START WITH 1 INCREMENT BY 50;
-
 CREATE TABLE duties
 (
     id          UUID         NOT NULL,
@@ -32,19 +30,6 @@ CREATE TABLE duty_events
     CONSTRAINT pk_duty_events PRIMARY KEY (id)
 );
 
-CREATE TABLE revchanges
-(
-    rev        BIGINT NOT NULL,
-    entityname VARCHAR(255)
-);
-
-CREATE TABLE revinfo
-(
-    rev      BIGINT NOT NULL,
-    revtstmp BIGINT,
-    CONSTRAINT pk_revinfo PRIMARY KEY (rev)
-);
-
 CREATE TABLE theme
 (
     id          UUID         NOT NULL,
@@ -63,6 +48,3 @@ ALTER TABLE duties_events
 
 ALTER TABLE duties_events
     ADD CONSTRAINT fk_duteve_on_duty_event_entity FOREIGN KEY (event_id) REFERENCES duty_events (id);
-
-ALTER TABLE revchanges
-    ADD CONSTRAINT fk_revchanges_on_default_tracking_modified_entities_changelog FOREIGN KEY (rev) REFERENCES revinfo (rev);

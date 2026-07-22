@@ -3,12 +3,15 @@ spring:
     name: ahun-duty-service
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ahun_duty}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 5
+
+  flyway:
+    clean-on-validation-error: true
 
   jpa:
     open-in-view: false
@@ -16,8 +19,12 @@ spring:
       ddl-auto: none
 
 telegram:
-  bot-token: ${TELEGRAM_BOT_TOKEN}
-  chat-id: ${TELEGRAM_CHAT_ID}
+  bot-token: ${TELEGRAM_BOT_TOKEN:dummy_token}
+  chat-id: ${TELEGRAM_CHAT_ID:dummy_chat_id}
 
 google:
-  credentials: ${GOOGLE_CREDENTIALS}
+  credentials: ${GOOGLE_CREDENTIALS:dummy_credentials}
+
+ahun:
+  cards:
+    templates-path: ${CARDS_TEMPLATES_PATH:/home/petrolal/Documents/AhunDocs}

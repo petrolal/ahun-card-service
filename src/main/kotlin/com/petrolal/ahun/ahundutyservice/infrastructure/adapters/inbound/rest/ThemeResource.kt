@@ -33,6 +33,16 @@ class ThemeResource(
     }
 
     /**
+     * Endpoint to get a specific theme by ID.
+     *
+     * @param id The theme UUID.
+     * @return The [Theme] object.
+     */
+    @GetMapping("/{id}")
+    fun findById(@PathVariable("id") id: UUID): Theme =
+        themeUsecase.findById(id)
+
+    /**
      * Endpoint to create a new theme.
      *
      * @param themeRequestDto Details of the theme to create.
@@ -43,7 +53,18 @@ class ThemeResource(
         themeUsecase.create(themeRequestDto)
 
     /**
-     * Endpoint to update an existing theme.
+     * Endpoint to update an existing theme using path variable.
+     *
+     * @param id The theme UUID.
+     * @param themeRequestDto The updated theme values.
+     * @return The updated [Theme] object.
+     */
+    @PutMapping("/{id}")
+    fun updateForPath(@PathVariable("id") id: UUID, @RequestBody themeRequestDto: ThemeRequestDto): Theme =
+        themeUsecase.update(id, themeRequestDto)
+
+    /**
+     * Endpoint to update an existing theme using query parameter.
      *
      * @param id The theme UUID.
      * @param themeRequestDto The updated theme values.

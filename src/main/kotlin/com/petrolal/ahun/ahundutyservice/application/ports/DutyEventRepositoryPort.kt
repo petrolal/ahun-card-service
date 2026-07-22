@@ -31,4 +31,21 @@ interface DutyEventRepositoryPort {
      * @return List of matching [DutyEvent]s.
      */
     fun findAllById(ids: List<UUID>): List<DutyEvent>
+
+    /**
+     * Retrieves a duty event by its UUID.
+     *
+     * @param id The duty event UUID.
+     * @return The [DutyEvent] or null if not found.
+     */
+    fun findById(id: UUID): DutyEvent?
+
+    /**
+     * Updates an existing duty event.
+     *
+     * @param id The UUID of the duty event to update.
+     * @param event The updated [DutyEvent] domain object.
+     * @return The updated [DutyEvent] domain object.
+     */
+    fun update(id: UUID, event: DutyEvent): DutyEvent
 }
