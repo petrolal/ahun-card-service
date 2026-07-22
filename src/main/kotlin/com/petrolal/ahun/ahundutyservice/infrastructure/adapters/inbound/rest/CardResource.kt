@@ -26,12 +26,10 @@ class CardResource(
     @GetMapping(value = ["preview", "preview/{dutyId}"])
     fun preview(
         @PathVariable(name = "dutyId", required = false) pathDutyId: UUID?,
-        @RequestParam(name = "dutyId", required = false) queryDutyId: UUID?,
-        @RequestParam(name = "title", required = false) title: String?,
-        @RequestParam(name = "subtitle", required = false) subtitle: String?
+        @RequestParam(name = "dutyId", required = false) queryDutyId: UUID?
     ): String {
         val dutyId = pathDutyId ?: queryDutyId
-        return cardUsecase.getPreview(dutyId = dutyId, overrideTitle = title, overrideSubtitle = subtitle)
+        return cardUsecase.getPreview(dutyId = dutyId)
     }
 
     /**
@@ -42,12 +40,10 @@ class CardResource(
     @GetMapping(value = ["render", "render/{dutyId}"], produces = [MediaType.IMAGE_PNG_VALUE])
     fun generateCard(
         @PathVariable(name = "dutyId", required = false) pathDutyId: UUID?,
-        @RequestParam(name = "dutyId", required = false) queryDutyId: UUID?,
-        @RequestParam(name = "title", required = false) title: String?,
-        @RequestParam(name = "subtitle", required = false) subtitle: String?
+        @RequestParam(name = "dutyId", required = false) queryDutyId: UUID?
     ): ResponseEntity<ByteArray> {
         val dutyId = pathDutyId ?: queryDutyId
-        val pngBytes = cardUsecase.renderCardPng(dutyId = dutyId, overrideTitle = title, overrideSubtitle = subtitle)
+        val pngBytes = cardUsecase.renderCardPng(dutyId = dutyId)
         return ResponseEntity.ok()
             .contentType(MediaType.IMAGE_PNG)
             .body(pngBytes)

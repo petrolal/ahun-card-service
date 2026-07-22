@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        body {
+            width: 1080px;
+            height: 1350px;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            font-family: 'Arial', sans-serif;
+            position: relative;
+        }
+    </style>
+    <style th:replace="~{fragments/card_components :: cardStyles}"></style>
+</head>
+<body th:style="${bgImageDataUri != null and !bgImageDataUri.isEmpty()} ? 'background-image: url(' + ${bgImageDataUri} + ');' : 'background-image: url(/images/' + (${bgImageName != null ? bgImageName : 'gira_de_exu_e_cura_2.png'}) + ');'">
+
+    <!-- Reusable Card Fields Fragment -->
+    <div th:replace="~{fragments/card_components :: cardFields}"></div>
+
+</body>
+</html>

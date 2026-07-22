@@ -6,6 +6,7 @@ import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
 import org.xhtmlrenderer.swing.Java2DRenderer
 import java.io.ByteArrayOutputStream
+import java.io.File
 import javax.imageio.ImageIO
 
 /**
@@ -25,10 +26,16 @@ class ThymeleafCardRendererAdapter(
 
     override fun renderPng(templateName: String, variables: Map<String, Any>): ByteArray {
         val htmlContent = renderHtml(templateName, variables)
-        val renderer = Java2DRenderer(htmlContent, 1000, 1250)
-        val bufferedImage = renderer.image
-        val baos = ByteArrayOutputStream()
-        ImageIO.write(bufferedImage, "png", baos)
-        return baos.toByteArray()
+        val tempFile = File.createTempFile("card_render_", ".html")
+        try {
+            tempFile.writeText(htmlContent)
+            val renderer = Java2DRenderer(tempFile, 1080, 1350)
+            val bufferedImage = renderer.image
+            val baos = ByteArrayOutputStream()
+            ImageIO.write(bufferedImage, "png", baos)
+            return baos.toByteArray()
+        } finally {
+            tempFile.delete()
+        }
     }
 }

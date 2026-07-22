@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Shared Card Styles Fragment -->
+    <style th:fragment="cardStyles">
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Position container over card text boxes */
+        .fields-container {
+            position: absolute;
+            top: 455px;
+            display: flex;
+            flex-direction: column;
+            width: 1080px;
+            height: 601px;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 60px 41px 60px;
+        }
+
+        .date-box {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            text-align: center;
+
+            color: #3a1e05;
+            justify-items: center;
+            width: 960px;
+            height: 120px;
+        }
+
+        .date-text {
+            font-size: 64px;
+            color: #3a1e05;
+            letter-spacing: 1px;
+        }
+
+        .events-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 41px;
+        }
+
+        .event-item {
+            font-size: 40px;
+            font-weight: 600;
+            color: #3a1e05;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 960px;
+            height: 111px;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .event-time {
+            color: #6b3e14;
+        }
+
+        .event-name {
+            color: #3a1e05;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Shared Card Fields Fragment -->
+<div th:fragment="cardFields" class="fields-container">
+        <!-- Lista de Eventos -->
+    <div class="events-container" th:if="${events != null and !events.empty}">
+        <!-- Campo Data -->
+        <div class="date-box" th:if="${date != null and !date.empty}">
+            <span class="date-text" th:text="${date}"></span>
+        </div>
+
+        <div class="event-item" th:each="event : ${events}" th:if="${event.visibleInCard}">
+            <span class="event-name" th:text="${event.name}"></span>
+            <span class="event-separator">-</span>
+            <span class="event-time" th:text="${event.time}"></span>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

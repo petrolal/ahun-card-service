@@ -3,12 +3,6 @@
 <head>
     <meta charset="UTF-8"/>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
             display: flex;
             justify-content: center;
@@ -21,8 +15,8 @@
 
         /* Moldura estilo Canvas / Preview */
         .canvas-container {
-            width: 1000px;
-            height: 1250px;
+            width: 1080px;
+            height: 1350px;
             position: relative;
             background-repeat: no-repeat;
             background-position: center;
@@ -31,60 +25,16 @@
             border-radius: 8px;
             overflow: hidden;
         }
-
-        /* Position container over card text boxes */
-        .fields-container {
-            position: absolute;
-            top: 50.5%;
-            left: 5.8%;
-            width: 88.4%;
-            display: flex;
-            flex-direction: column;
-            gap: 27px;
-        }
-
-        .card-box {
-            height: 98px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 0 20px;
-        }
-
-        .title-text {
-            font-size: 42px;
-            font-weight: bold;
-            color: #3a1e05;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            line-height: 1.1;
-        }
-
-        .subtitle-text {
-            font-size: 36px;
-            font-weight: bold;
-            color: #4a280a;
-            line-height: 1.1;
-        }
     </style>
+    <style th:replace="~{fragments/card_components :: cardStyles}"></style>
 </head>
 <body>
 
 <div class="canvas-container"
-     th:style="${bgImageDataUri != null and !bgImageDataUri.isEmpty()} ? 'background-image: url(' + ${bgImageDataUri} + ');' : 'background-image: url(' + @{'/images/' + ${bgImageName != null ? bgImageName : 'gira_de_exu_e_cura_2.png'}} + ');'">
+     th:style="${bgImageDataUri != null and !bgImageDataUri.isEmpty()} ? 'background-image: url(' + ${bgImageDataUri} + ');' : 'background-image: url(/images/' + (${bgImageName != null ? bgImageName : 'gira_de_exu_e_cura_2.png'}) + ');'">
 
-    <div class="fields-container">
-        <!-- Campo 1: Título Principal / Evento -->
-        <div class="card-box">
-            <h1 class="title-text" th:text="${eventTitle}">GIRA DE EXU E CURA</h1>
-        </div>
-
-        <!-- Campo 2: Data, Horário ou Subtítulo -->
-        <div class="card-box">
-            <h2 class="subtitle-text" th:text="${eventSubtitle}">SÁBADO | 20 DE MAIO - 18H</h2>
-        </div>
-    </div>
+    <!-- Reusable Card Fields Fragment -->
+    <div th:replace="~{fragments/card_components :: cardFields}"></div>
 
 </div>
 

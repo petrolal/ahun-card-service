@@ -7,6 +7,7 @@ import com.petrolal.ahun.ahundutyservice.application.ports.TemplateRepositoryPor
 import com.petrolal.ahun.ahundutyservice.domain.Duty
 import com.petrolal.ahun.ahundutyservice.domain.DutyTypeEnum
 import com.petrolal.ahun.ahundutyservice.domain.Theme
+import com.petrolal.ahun.ahundutyservice.domain.exception.BadRequestException
 import com.petrolal.ahun.ahundutyservice.domain.exception.ResourceNotFoundException
 import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Service
@@ -31,48 +32,51 @@ class CardUsecase(
 ) : CardUsecasePort {
 
     override fun getPreview(
-        dutyId: UUID?,
-        overrideTitle: String?,
-        overrideSubtitle: String?
+        dutyId: UUID?
     ): String {
-        val cardData = resolveCardData(dutyId, overrideTitle, overrideSubtitle)
+        val cardData = resolveCardData(dutyId)
+        val formattedDate = cardData.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         val variables = mapOf(
             "dutyId" to (dutyId?.toString() ?: ""),
-            "eventTitle" to cardData.title,
-            "eventSubtitle" to cardData.subtitle,
+            "events" to cardData.events,
             "bgImageName" to cardData.bgImageName,
-            "bgImageDataUri" to cardData.bgImageDataUri
+            "bgImageDataUri" to cardData.bgImageDataUri,
+            "date" to formattedDate,
         )
         return cardRenderPort.renderHtml("preview_card_template", variables)
     }
 
     override fun renderCardPng(
-        dutyId: UUID?,
-        overrideTitle: String?,
-        overrideSubtitle: String?
+        dutyId: UUID?
     ): ByteArray {
-        val cardData = resolveCardData(dutyId, overrideTitle, overrideSubtitle)
+        val cardData = resolveCardData(dutyId)
+        val formattedDate = cardData.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         val variables = mapOf(
             "dutyId" to (dutyId?.toString() ?: ""),
-            "eventTitle" to cardData.title,
-            "eventSubtitle" to cardData.subtitle,
+            "events" to cardData.events,
             "bgImageName" to cardData.bgImageName,
-            "bgImageDataUri" to cardData.bgImageDataUri
+            "bgImageDataUri" to cardData.bgImageDataUri,
+            "date" to formattedDate
         )
-        return cardRenderPort.renderPng("generic_2_fields_template", variables)
+        return cardRenderPort.renderPng("2_fields_template", variables)
     }
 
+    data class CardEventData(
+        val name: String,
+        val time: String,
+        val description: String? = null,
+        val visibleInCard: Boolean = true
+    )
+
     private data class CardData(
-        val title: String,
-        val subtitle: String,
+        val events: List<CardEventData>,
         val bgImageName: String,
-        val bgImageDataUri: String
+        val bgImageDataUri: String,
+        val date: LocalDate,
     )
 
     private fun resolveCardData(
-        dutyId: UUID?,
-        overrideTitle: String?,
-        overrideSubtitle: String?
+        dutyId: UUID?
     ): CardData {
         val duty = if (dutyId != null) {
             dutyRepository.findById(dutyId)
@@ -86,27 +90,36 @@ class CardUsecase(
             ) ?: throw ResourceNotFoundException("No GIRA_ABERTA duty found in database for actual month or latest records")
         }
 
-        val title = overrideTitle?.takeIf { it.isNotBlank() }
-            ?: duty.theme.name.uppercase()
+        val date = duty.date
 
-        val subtitle = overrideSubtitle?.takeIf { it.isNotBlank() }
-            ?: formatSubtitle(duty)
+        val eventsData = duty.events
+            .sortedBy { it.startedAt }
+            .map { event ->
+                val hour = event.startedAt.hour
+                val minute = event.startedAt.minute
+                val timeStr = if (minute == 0) "${hour}H" else "${hour}H${minute.toString().padStart(2, '0')}"
+                CardEventData(
+                    name = event.name,
+                    time = timeStr,
+                    description = event.description,
+                    visibleInCard = event.visibleInCard
+                )
+            }
 
         val bgImageName = resolveBgImageForTheme(duty.theme)
         val bgImageDataUri = loadBase64Image(bgImageName)
 
-        return CardData(title, subtitle, bgImageName, bgImageDataUri)
+        return CardData(eventsData, bgImageName, bgImageDataUri, date)
     }
 
     private fun resolveBgImageForTheme(theme: Theme): String {
         // 1. Query database for templates associated with this specific theme
         val dbTemplates = templateRepository.findByThemeId(theme.id)
         if (dbTemplates.isNotEmpty()) {
-            // Pick a random template if multiple templates exist for this theme
             return dbTemplates.random().imagePath
         }
 
-        // 2. Fallback matching based on normalized theme name
+        // 2. Matching based on normalized theme name in static images
         val normalizedName = normalizeKey(theme.name)
         val allStaticImages = listOf(
             "atendimento_de_cura_2.png",
@@ -133,7 +146,7 @@ class CardUsecase(
             return matchingCandidates.random()
         }
 
-        return "gira_de_exu_e_cura_2.png"
+        throw ResourceNotFoundException("No template or background image found for theme '${theme.name}' (id: ${theme.id})")
     }
 
     private fun normalizeKey(input: String): String {
@@ -145,23 +158,13 @@ class CardUsecase(
     }
 
     private fun loadBase64Image(imageName: String): String {
-        return try {
-            val resource = ClassPathResource("static/images/$imageName")
-            if (resource.exists()) {
-                val bytes = resource.inputStream.readAllBytes()
-                val base64 = Base64.getEncoder().encodeToString(bytes)
-                "data:image/png;base64,$base64"
-            } else {
-                val fallback = ClassPathResource("static/images/gira_de_exu_e_cura_2.png")
-                if (fallback.exists()) {
-                    val bytes = fallback.inputStream.readAllBytes()
-                    val base64 = Base64.getEncoder().encodeToString(bytes)
-                    "data:image/png;base64,$base64"
-                } else ""
-            }
-        } catch (_: Exception) {
-            ""
+        val resource = ClassPathResource("static/images/$imageName")
+        if (resource.exists()) {
+            val bytes = resource.inputStream.readAllBytes()
+            val base64 = Base64.getEncoder().encodeToString(bytes)
+            return "data:image/png;base64,$base64"
         }
+        throw ResourceNotFoundException("Background image file '$imageName' could not be found on server disk")
     }
 
     private fun formatSubtitle(duty: Duty): String {

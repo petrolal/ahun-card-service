@@ -70,7 +70,7 @@ class CardUsecaseTest {
     @Test
     fun `should generate PNG card for specific dutyId`() {
         val dutyId = UUID.randomUUID()
-        val theme = Theme(UUID.randomUUID(), "Gira de Caboclo", null, LocalDateTime.now())
+        val theme = Theme(UUID.randomUUID(), "Gira de Exu e Cura", null, LocalDateTime.now())
         val duty = Duty(
             id = dutyId,
             theme = theme,
@@ -120,5 +120,64 @@ class CardUsecaseTest {
 
         assertNotNull(bytes)
         verify(templateRepository).findByThemeId(theme.id)
+    }
+
+    @Test
+    fun `should pass formatted event list to template variables`() {
+        val dutyId = UUID.randomUUID()
+        val theme = Theme(UUID.randomUUID(), "Gira de Exu", null, LocalDateTime.now())
+        val e1 = DutyEvent(UUID.randomUUID(), "Portões", LocalTime.of(17, 30), null, true, LocalDateTime.now())
+        val e2 = DutyEvent(UUID.randomUUID(), "Abertura", LocalTime.of(18, 0), null, true, LocalDateTime.now())
+        val duty = Duty(
+            id = dutyId,
+            theme = theme,
+            dutyType = DutyTypeEnum.OPENED_GIRA,
+            date = LocalDate.of(2026, 5, 20),
+            period = SemesterEnum.FIRST_SEMESTER,
+            year = 2026,
+            events = mutableSetOf(e1, e2),
+            createdAt = LocalDateTime.now()
+        )
+
+        whenever(dutyRepository.findById(dutyId)).thenReturn(duty)
+        whenever(cardRenderPort.renderHtml(any(), any())).thenReturn("<html>Preview</html>")
+
+        cardUsecase.getPreview(dutyId = dutyId)
+
+        val captor = argumentCaptor<Map<String, Any>>()
+        verify(cardRenderPort).renderHtml(eq("preview_card_template"), captor.capture())
+
+        val vars = captor.firstValue
+        assertTrue(vars.containsKey("events"))
+        @Suppress("UNCHECKED_CAST")
+        val eventsList = vars["events"] as List<CardUsecase.CardEventData>
+        assertEquals(2, eventsList.size)
+        assertEquals("17H30", eventsList[0].time)
+        assertEquals("Portões", eventsList[0].name)
+        assertEquals("18H", eventsList[1].time)
+        assertEquals("Abertura", eventsList[1].name)
+    }
+
+    @Test
+    fun `should throw ResourceNotFoundException when no template or background image exists for theme`() {
+        val dutyId = UUID.randomUUID()
+        val theme = Theme(UUID.randomUUID(), "Unregistered Theme XYZ", null, LocalDateTime.now())
+        val duty = Duty(
+            id = dutyId,
+            theme = theme,
+            dutyType = DutyTypeEnum.OPENED_GIRA,
+            date = LocalDate.of(2026, 5, 20),
+            period = SemesterEnum.FIRST_SEMESTER,
+            year = 2026,
+            events = mutableSetOf(),
+            createdAt = LocalDateTime.now()
+        )
+
+        whenever(dutyRepository.findById(dutyId)).thenReturn(duty)
+        whenever(templateRepository.findByThemeId(theme.id)).thenReturn(emptyList())
+
+        assertThrows(ResourceNotFoundException::class.java) {
+            cardUsecase.renderCardPng(dutyId = dutyId)
+        }
     }
 }
